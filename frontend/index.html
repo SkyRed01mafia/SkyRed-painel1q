@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKY RED | Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #050505;
+            color: #00ff41;
+            overflow: hidden;
+        }
+
+        .cyber-border {
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
+        }
+
+        .cyber-button {
+            background: #00ff41;
+            color: #000;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+
+        .cyber-button:hover {
+            background: #fff;
+            box-shadow: 0 0 15px #00ff41;
+        }
+
+        .terminal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: #00ff41;
+            border-radius: 10px;
+        }
+
+        .glitch {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 62% { transform: translate(2px, 0) skew(0deg); }
+            4%, 64% { transform: translate(-2px, 0) skew(0deg); }
+            63% { transform: translate(0, 0) skew(3deg); }
+        }
+
+        input {
+            background: #000 !important;
+            border: 1px solid rgba(0, 255, 65, 0.3) !important;
+            color: #00ff41 !important;
+            outline: none;
+        }
+        input:focus {
+            border-color: #00ff41 !important;
+            box-shadow: 0 0 5px #00ff41;
+        }
+    </style>
+</head>
+<body class="h-screen flex p-4 gap-4">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 flex flex-col gap-4">
+        <div class="cyber-border bg-[#0a0a0a] p-4 rounded-lg flex items-center gap-3">
+            <i data-lucide="shield-alert" class="text-[#00ff41]"></i>
+            <span class="font-bold tracking-tighter glitch">SKY RED v10.0</span>
+        </div>
+
+        <nav class="flex flex-col gap-2">
+            <p class="text-[10px] text-[#00ff41]/50 px-2 uppercase mb-1">Main Modules</p>
+            <button onclick="switchTab('network')" class="flex items-center gap-3 p-2 rounded hover:bg-[#00ff41]/10 transition-all text-sm">
+                <i data-lucide="globe" size="18"></i> Networking
+            </button>
+            <button onclick="switchTab('brute')" class="flex items-center gap-3 p-2 rounded hover:bg-[#00ff41]/10 transition-all text-sm">
+                <i data-lucide="lock" size="18"></i> Brute Force
+            </button>
+            <button onclick="switchTab('osint')" class="flex items-center gap-3 p-2 rounded hover:bg-[#00ff41]/10 transition-all text-sm">
+                <i data-lucide="user-search" size="18"></i> OSINT / Leaks
+            </button>
+            <button onclick="switchTab('malware')" class="flex items-center gap-3 p-2 rounded hover:bg-[#00ff41]/10 transition-all text-sm">
+                <i data-lucide="cpu" size="18"></i> Malware Lab
+            </button>
+            <button onclick="switchTab('sqli')" class="flex items-center gap-3 p-2 rounded hover:bg-[#00ff41]/10 transition-all text-sm">
+                <i data-lucide="database" size="18"></i> SQL Injection
+            </button>
+        </nav>
+
+        <div class="mt-auto cyber-border bg-red-950/20 p-3 rounded-lg text-red-500 text-[10px] flex items-center gap-2">
+            <i data-lucide="alert-triangle" size="14"></i>
+            <span>SISTEMA EM MODO STEALTH: ATIVO</span>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col gap-4">
+        <!-- TOP BAR -->
+        <header class="h-14 cyber-border bg-[#0a0a0a] rounded-lg flex items-center justify-between px-6">
+            <div class="flex items-center gap-6 text-[11px]">
+                <div class="flex items-center gap-2">
+                    <span class="opacity-50">STATUS:</span>
+                    <span class="text-green-400 animate-pulse">CONNECTED</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="opacity-50">C2 SERVER:</span>
+                    <span class="text-blue-400">192.168.0.105:5000</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <input id="globalTarget" type="text" placeholder="Target IP/URL/CPF..." class="px-3 py-1 text-xs w-64 rounded">
+                <i data-lucide="search" size="16" class="opacity-50"></i>
+            </div>
+        </header>
+
+        <!-- WORKSPACE -->
+        <div class="flex-1 grid grid-cols-12 gap-4 overflow-hidden">
+            
+            <!-- CONTROL PANEL -->
+            <div id="controlPanel" class="col-span-7 cyber-border bg-[#0a0a0a] rounded-lg p-6 overflow-y-auto">
+                <!-- Content injected by JS -->
+            </div>
+
+            <!-- TERMINAL -->
+            <div class="col-span-5 flex flex-col gap-4">
+                <div class="flex-1 bg-black cyber-border rounded-lg flex flex-col overflow-hidden">
+                    <div class="bg-[#0a0a0a] px-4 py-2 border-b border-[#00ff41]/30 flex justify-between items-center">
+                        <span class="text-xs font-bold flex items-center gap-2">
+                            <i data-lucide="terminal" size="14"></i> ROOT@SKYRED:~/console
+                        </span>
+                        <div class="flex gap-1">
+                            <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                            <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                    </div>
+                    <div id="terminalLogs" class="flex-1 p-4 overflow-y-auto text-[11px] space-y-1 terminal-scroll">
+                        <div class="text-[#00ff41]/50"># Initializing Sky Red Kernel...</div>
+                        <div class="text-[#00ff41]/50"># Establishing secure tunnel...</div>
+                        <div class="text-white"># System Ready. Awaiting commands.</div>
+                    </div>
+                </div>
+
+                <!-- HARDWARE STATUS -->
+                <div class="h-40 cyber-border bg-[#0a0a0a] rounded-lg p-4 grid grid-cols-3 gap-4">
+                    <div class="flex flex-col items-center justify-center border border-[#00ff41]/10 rounded p-2 gap-1">
+                        <i data-lucide="monitor" size="20" class="opacity-50"></i>
+                        <span class="text-[10px]">PC/NB</span>
+                        <span class="text-xs font-bold text-green-400">VULNERABLE</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-center border border-[#00ff41]/10 rounded p-2 gap-1">
+                        <i data-lucide="smartphone" size="20" class="opacity-50"></i>
+                        <span class="text-[10px]">MOBILE</span>
+                        <span class="text-xs font-bold text-green-400">VULNERABLE</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-center border border-[#00ff41]/10 rounded p-2 gap-1">
+                        <i data-lucide="tv" size="20" class="opacity-50"></i>
+                        <span class="text-[10px]">SMART TV</span>
+                        <span class="text-xs font-bold text-yellow-400">SCANNING</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = "http://localhost:5000/api";
+        
+        function log(msg, type = 'info') {
+            const terminal = document.getElementById('terminalLogs');
+            const div = document.createElement('div');
+            const time = new Date().toLocaleTimeString();
+            div.className = type === 'success' ? 'text-white font-bold' : 'text-[#00ff41]/80';
+            div.innerHTML = `<span class="opacity-30">[${time}]</span> # ${msg}`;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        async function callApi(endpoint, data) {
+            log(`Sending request to ${endpoint}...`);
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                return result;
+            } catch (e) {
+                log(`API Error: ${e.message}`, 'error');
+                return null;
+            }
+        }
+
+        const tabs = {
+            network: {
+                title: 'Network Operations',
+                actions: [
+                    { name: 'DNS Resolve', endpoint: '/network/resolve', params: { target: 'target' } },
+                    { name: 'Port Scan', endpoint: '/network/portscan', params: { target: 'target' } },
+                    { name: 'GeoIP Trace', endpoint: '/network/geoip', params: { ip: 'target' } },
+                    { name: 'DDoS Attack', endpoint: '/ddos/start', params: { target: 'target', port: 80, duration: 60 } }
+                ]
+            },
+            brute: {
+                title: 'Credential Cracker',
+                actions: [
+                    { name: 'SSH Brute', endpoint: '/brute/ssh', params: { host: 'target', username: 'admin' } },
+                    { name: 'Discord Breach', endpoint: '/brute/discord', params: { email: 'target' } },
+                    { name: 'Bank Access', endpoint: '/brute/bank', params: { cpf: 'target', bank: 'Nubank' } }
+                ]
+            },
+            osint: {
+                title: 'OSINT & Data Leaks',
+                actions: [
+                    { name: 'Full Search', endpoint: '/osint/search', params: { query: 'target' } },
+                    { name: 'CPF Validate', endpoint: '/osint/cpf', params: { cpf: 'target' } },
+                    { name: 'Find Relatives', endpoint: '/osint/relatives', params: { cpf: 'target' } }
+                ]
+            },
+            malware: {
+                title: 'Malware Laboratory',
+                actions: [
+                    { name: 'Build Trojan', endpoint: '/malware/build', params: { type: 'trojan', platform: 'windows' } },
+                    { name: 'Spyware Deploy', endpoint: '/malware/build', params: { type: 'spyware', platform: 'android' } }
+                ]
+            },
+            sqli: {
+                title: 'SQL Injection',
+                actions: [
+                    { name: 'Detect Vulnerability', endpoint: '/sqli/detect', params: { url: 'target' } },
+                    { name: 'Dump Database', endpoint: '/sqli/dump', params: { url: 'target' } }
+                ]
+            }
+        };
+
+        function switchTab(tabKey) {
+            const tab = tabs[tabKey];
+            const panel = document.getElementById('controlPanel');
+            
+            let html = `<div class="flex items-center gap-2 text-xl font-bold border-b border-[#00ff41]/30 pb-4 mb-6">
+                            <i data-lucide="zap" class="text-[#00ff41]"></i> ${tab.title}
+                        </div>
+                        <div class="grid grid-cols-1 gap-3">`;
+            
+            tab.actions.forEach((action, idx) => {
+                html += `
+                    <div class="flex items-center justify-between p-3 border border-[#00ff41]/20 rounded bg-black/40 hover:bg-[#00ff41]/10 transition-all group">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="chevron-right" size="16" class="opacity-50 group-hover:text-[#00ff41]"></i>
+                            <span class="text-sm">${action.name}</span>
+                        </div>
+                        <button onclick="execute('${action.endpoint}', ${JSON.stringify(action.params).replace(/"/g, '&quot;')})" 
+                                class="cyber-button px-4 py-1 rounded">
+                            EXECUTE
+                        </button>
+                    </div>`;
+            });
+            
+            html += `</div>`;
+            panel.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        async function execute(endpoint, params) {
+            const targetVal = document.getElementById('globalTarget').value;
+            if (!targetVal) {
+                log("Error: Target input is empty!", "error");
+                return;
+            }
+
+            // Map target value to the correct parameter
+            const finalParams = {};
+            for (let key in params) {
+                finalParams[key] = (params[key] === 'target') ? targetVal : params[key];
+            }
+
+            const result = await callApi(endpoint, finalParams);
+            if (result) {
+                log(`Result from ${endpoint}: ${JSON.stringify(result)}`, 'success');
+            }
+        }
+
+        // Init
+        window.onload = () => {
+            lucide.createIcons();
+            switchTab('network');
+        };
+    </script>
+</body>
+</html>
